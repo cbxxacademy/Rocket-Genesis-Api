@@ -1,0 +1,63 @@
+/* *************************
+ * ENVIRONMENT CONFIGURATION
+ ***************************/
+import dotenv from "dotenv";
+dotenv.config();
+
+
+/* *****************
+ * CORE DEPENDENCIES
+ *******************/
+import express from "express";
+
+
+/* ********************
+ * SERVER CONFIGURATION
+ **********************/
+const PORT = process.env.PORT || 3004;
+const ENV = process.env.NODE_ENV || 'development';
+const app = express();
+
+
+/* ***********************
+ * GLOBAL MIDDLEWARE SETUP
+ *************************/
+app.use(express.json());
+
+
+/* *************
+* ROUTE IMPORTS
+***************/
+import healthRoutes from "./src/routes/health.routes.js";
+// ... add more routes here as you build them
+
+
+/* *************
+* MOUNT ROUTES
+***************/
+healthRoutes.healthRoutes(app);
+// ... add more mount routes here as you build them
+
+
+/* **************
+ * ERROR HANDLING
+ ****************/
+// 404 handler for unmatched routes
+app.use('*', (req, res) => {
+    res.status(404).json({
+        success: false,
+        error: 'Route not found',
+        message: `${req.method} ${req.originalUrl} does not exist`,
+        timestamp: new Date().toISOString()
+    });
+});
+
+
+/* **************
+ * SERVER STARTUP
+ ****************/
+app.listen(PORT, () => {
+    console.log(`🚀 Server is running on port ${PORT}`);
+    console.log(`📍 Environment: ${ENV || 'development'}`);
+    console.log(`🔗 Base URL: http://localhost:${PORT}`);
+});
